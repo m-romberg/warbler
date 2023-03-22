@@ -26,18 +26,21 @@ connect_db(app)
 
 ##############################################################################
 # User signup/login/logout
+#before route make csrf form and add to g to have access
 
-
-@app.before_request
+@app.before_request #note: function name not fully truthful
 def add_user_to_g():
     """If we're logged in, add curr user to Flask global."""
 
     if CURR_USER_KEY in session:
         g.user = User.query.get(session[CURR_USER_KEY])
+        add_csrf_form_to_g()
 
     else:
         g.user = None
 
+def add_csrf_form_to_g():
+    g.form = CSRFProtectForm()
 
 def do_login(user):
     """Log in user."""
@@ -115,19 +118,15 @@ def login():
 def logout():
     """Handle logout of user and redirect to login page."""
 
-    form = CSRFProtectForm()
+    if g.form.validate_on_submit():
 
-    if form.validate_on_submit():
-        session.pop('CURR_USER_KEY', None)
+        do_logout()
 
         flash("Successfully logged out")
         return redirect('/login')
 
     else:
         raise Unauthorized()
-
-    # IMPLEMENT THIS AND FIX BUG
-    # DO NOT CHANGE METHOD ON ROUTE
 
 
 ##############################################################################
@@ -164,7 +163,7 @@ def show_user(user_id):
 
     user = User.query.get_or_404(user_id)
 
-    return render_template('users/show.html', user=user)
+    return render_template('users/show.html', user=user, form=g.form)
 
 
 @app.get('/users/<int:user_id>/following')
@@ -327,10 +326,8 @@ def homepage():
                     .order_by(Message.timestamp.desc())
                     .limit(100)
                     .all())
-        form = CSRFProtectForm()
 
-
-        return render_template('home.html', messages=messages, form=form)
+        return render_template('home.html', messages=messages, form=g.form)
 
     else:
         return render_template('home-anon.html')
