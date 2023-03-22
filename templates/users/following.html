@@ -14,12 +14,18 @@
                  class="card-hero">
           </div>
           <div class="card-contents">
+
             <a href="/users/{{ followed_user.id }}" class="card-link">
               <img src="{{ followed_user.image_url }}"
                    alt="Image for {{ followed_user.username }}"
                    class="card-image">
+            <div>
               <p>@{{ followed_user.username }}</p>
+            </div>
             </a>
+
+            <p class="card-bio">{{ followed_user.bio }}</p>
+
             {% if g.user.is_following(followed_user) %}
             <form method="POST"
                   action="/users/stop-following/{{ followed_user.id }}">
@@ -35,7 +41,7 @@
             {% endif %}
 
           </div>
-          <p class="card-bio">BIO HERE</p>
+
         </div>
       </div>
     </div>
