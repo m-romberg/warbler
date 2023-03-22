@@ -2,11 +2,11 @@
 
 {% block content %}
 
-<div id="warbler-hero"
+<div id="warbler-hero" style="background-image: url('{{ user.header_image_url }}')"
      class="row full-width">
-     <img src="{{ user.header_image_url }}"
+     <!-- <img src="{{ user.header_image_url }}"
      alt="Image for {{ user.username }}"
-     id="profile-header">
+     id="profile-header"> -->
 </div>
 <img src="{{ user.image_url }}"
      alt="Image for {{ user.username }}"
