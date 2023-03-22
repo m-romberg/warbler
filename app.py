@@ -26,7 +26,6 @@ connect_db(app)
 
 ##############################################################################
 # User signup/login/logout
-#before route make csrf form and add to g to have access
 
 @app.before_request
 def add_user_to_g():
@@ -37,10 +36,10 @@ def add_user_to_g():
 
     else:
         g.user = None
-# TODO: overly specific docstring
+
 @app.before_request
 def add_csrf_form_to_g():
-    """CSRF form for logout"""
+    """Add empty CSRF form to g"""
     g.csrf_form = CSRFProtectForm()
 
 def do_login(user):
@@ -118,16 +117,15 @@ def login():
 @app.post('/logout')
 def logout():
     """Handle logout of user and redirect to login page."""
-    # TODO: check if we have a g.user
-    if g.csrf_form.validate_on_submit():
+    if g.user:
+        if g.csrf_form.validate_on_submit():
 
-        do_logout()
+            do_logout()
 
-        flash("Successfully logged out")
-        return redirect('/login')
+            flash("Successfully logged out")
+            return redirect('/login')
 
-    else:
-        raise Unauthorized()
+    raise Unauthorized()
 
 
 ##############################################################################
@@ -151,7 +149,7 @@ def list_users():
     else:
         users = User.query.filter(User.username.like(f"%{search}%")).all()
 
-    return render_template('users/index.html', users=users, form=g.csrf_form)
+    return render_template('users/index.html', users=users)
 
 
 @app.get('/users/<int:user_id>')
@@ -164,7 +162,7 @@ def show_user(user_id):
 
     user = User.query.get_or_404(user_id)
 
-    return render_template('users/show.html', user=user, form=g.csrf_form)
+    return render_template('users/show.html', user=user)
 
 
 @app.get('/users/<int:user_id>/following')
@@ -176,7 +174,7 @@ def show_following(user_id):
         return redirect("/")
 
     user = User.query.get_or_404(user_id)
-    return render_template('users/following.html', user=user, form=g.csrf_form)
+    return render_template('users/following.html', user=user)
 
 
 @app.get('/users/<int:user_id>/followers')
@@ -188,7 +186,7 @@ def show_followers(user_id):
         return redirect("/")
 
     user = User.query.get_or_404(user_id)
-    return render_template('users/followers.html', user=user, form=g.csrf_form)
+    return render_template('users/followers.html', user=user)
 
 
 @app.post('/users/follow/<int:follow_id>')
@@ -247,16 +245,9 @@ def profile():
 
         g.user.username = form.username.data
         g.user.email = form.email.data
-        g.user.image_url = form.image_url.data
-        g.user.header_image_url = form.header_image_url.data
+        g.user.image_url = form.image_url.data or DEFAULT_IMAGE_URL
+        g.user.header_image_url = form.header_image_url.data or DEFAULT_HEADER_IMAGE_URL
         g.user.bio = form.bio.data
-
-        # if the image_url or header_image_url we just assigned is falsey,
-        # reassign it to the default
-        if not g.user.image_url:
-            g.user.image_url = DEFAULT_IMAGE_URL
-        if not g.user.header_image_url:
-            g.user.header_image_url = DEFAULT_HEADER_IMAGE_URL
 
         db.session.commit()
         return redirect(f"/users/{g.user.id}")
@@ -264,8 +255,6 @@ def profile():
 
     else:
         return render_template("/users/edit.html", form=form)
-
-    # IMPLEMENT THIS
 
 
 @app.post('/users/delete')
@@ -357,18 +346,20 @@ def homepage():
     """
     if g.user:
         following = g.user.following
+
         following_ids = [user.id for user in following]
-        # TODO: change this to make it not a lie
         following_ids.append(g.user.id)
+
+        homepage_messages_ids = following_ids
 
         messages = (Message
                     .query
-                    .filter(Message.user_id.in_(following_ids))
+                    .filter(Message.user_id.in_(homepage_messages_ids))
                     .order_by(Message.timestamp.desc())
                     .limit(100)
                     .all())
-        # TODO: In the template itself we can refer to the csrf_form
-        return render_template('home.html', messages=messages, form=g.csrf_form)
+
+        return render_template('home.html', messages=messages)
 
     else:
         return render_template('home-anon.html')
