@@ -6,7 +6,7 @@ from flask_debugtoolbar import DebugToolbarExtension
 from sqlalchemy.exc import IntegrityError
 
 from forms import UserAddForm, LoginForm, MessageForm, CSRFProtectForm, EditProfileForm
-from models import db, connect_db, User, Message
+from models import db, connect_db, User, Message, DEFAULT_HEADER_IMAGE_URL, DEFAULT_IMAGE_URL
 from werkzeug.exceptions import Unauthorized
 
 load_dotenv()
@@ -37,7 +37,7 @@ def add_user_to_g():
 
     else:
         g.user = None
-
+# TODO: overly specific docstring
 @app.before_request
 def add_csrf_form_to_g():
     """CSRF form for logout"""
@@ -118,7 +118,7 @@ def login():
 @app.post('/logout')
 def logout():
     """Handle logout of user and redirect to login page."""
-
+    # TODO: check if we have a g.user
     if g.csrf_form.validate_on_submit():
 
         do_logout()
@@ -251,6 +251,13 @@ def profile():
         g.user.header_image_url = form.header_image_url.data
         g.user.bio = form.bio.data
 
+        # if the image_url or header_image_url we just assigned is falsey,
+        # reassign it to the default
+        if not g.user.image_url:
+            g.user.image_url = DEFAULT_IMAGE_URL
+        if not g.user.header_image_url:
+            g.user.header_image_url = DEFAULT_HEADER_IMAGE_URL
+
         db.session.commit()
         return redirect(f"/users/{g.user.id}")
 
@@ -351,6 +358,8 @@ def homepage():
     if g.user:
         following = g.user.following
         following_ids = [user.id for user in following]
+        # TODO: change this to make it not a lie
+        following_ids.append(g.user.id)
 
         messages = (Message
                     .query
@@ -358,7 +367,7 @@ def homepage():
                     .order_by(Message.timestamp.desc())
                     .limit(100)
                     .all())
-
+        # TODO: In the template itself we can refer to the csrf_form
         return render_template('home.html', messages=messages, form=g.csrf_form)
 
     else:

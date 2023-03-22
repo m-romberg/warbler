@@ -57,7 +57,7 @@ class EditProfileForm(FlaskForm):
         'E-mail',
         validators=[DataRequired(), Email()],
     )
-
+    # TODO: url validator
     image_url = StringField(
         '(Optional) Image URL',
     )
@@ -65,14 +65,14 @@ class EditProfileForm(FlaskForm):
     header_image_url = StringField(
         '(Optional) Header Image URL',
     )
-
+    # TODO: TextAreaField
     bio = StringField(
         '(Optional) Bio',
     )
-
+    # TODO: required
     password = PasswordField(
         'Enter current password',
-        validators=[Length(min=6)],
+        # validators=[Length(min=6)],
     )
 
 
