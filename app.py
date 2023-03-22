@@ -40,6 +40,7 @@ def add_user_to_g():
         g.user = None
 
 def add_csrf_form_to_g():
+    """CSRF form for logout"""
     g.form = CSRFProtectForm()
 
 def do_login(user):
