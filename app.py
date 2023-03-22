@@ -7,6 +7,7 @@ from sqlalchemy.exc import IntegrityError
 
 from forms import UserAddForm, LoginForm, MessageForm, CSRFProtectForm
 from models import db, connect_db, User, Message
+from werkzeug.exceptions import Unauthorized
 
 load_dotenv()
 
@@ -121,6 +122,9 @@ def logout():
 
         flash("Successfully logged out")
         return redirect('/login')
+
+    else:
+        raise Unauthorized()
 
     # IMPLEMENT THIS AND FIX BUG
     # DO NOT CHANGE METHOD ON ROUTE
