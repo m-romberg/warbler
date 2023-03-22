@@ -150,7 +150,7 @@ def list_users():
     else:
         users = User.query.filter(User.username.like(f"%{search}%")).all()
 
-    return render_template('users/index.html', users=users)
+    return render_template('users/index.html', users=users, form=g.form)
 
 
 @app.get('/users/<int:user_id>')
@@ -175,7 +175,7 @@ def show_following(user_id):
         return redirect("/")
 
     user = User.query.get_or_404(user_id)
-    return render_template('users/following.html', user=user)
+    return render_template('users/following.html', user=user, form=g.form)
 
 
 @app.get('/users/<int:user_id>/followers')
@@ -187,7 +187,7 @@ def show_followers(user_id):
         return redirect("/")
 
     user = User.query.get_or_404(user_id)
-    return render_template('users/followers.html', user=user)
+    return render_template('users/followers.html', user=user, form=g.form)
 
 
 @app.post('/users/follow/<int:follow_id>')
