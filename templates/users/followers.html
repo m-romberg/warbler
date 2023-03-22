@@ -21,7 +21,6 @@
                    class="card-image">
               <p>@{{ follower.username }}</p>
             </a>
-            <p class="card-bio">{{ follower.bio }}</p>
 
             {% if g.user.is_following(follower) %}
             <form method="POST"
@@ -37,7 +36,7 @@
             {% endif %}
 
           </div>
-
+          <p class="card-bio">{{ follower.bio }}</p>
         </div>
       </div>
     </div>

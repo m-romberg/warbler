@@ -28,20 +28,20 @@ connect_db(app)
 # User signup/login/logout
 #before route make csrf form and add to g to have access
 
-@app.before_request #note: function name not fully truthful
+@app.before_request
 def add_user_to_g():
     """If we're logged in, add curr user to Flask global."""
 
     if CURR_USER_KEY in session:
         g.user = User.query.get(session[CURR_USER_KEY])
-        add_csrf_form_to_g()
 
     else:
         g.user = None
 
+@app.before_request
 def add_csrf_form_to_g():
     """CSRF form for logout"""
-    g.form = CSRFProtectForm()
+    g.csrf_form = CSRFProtectForm()
 
 def do_login(user):
     """Log in user."""
@@ -119,7 +119,7 @@ def login():
 def logout():
     """Handle logout of user and redirect to login page."""
 
-    if g.form.validate_on_submit():
+    if g.csrf_form.validate_on_submit():
 
         do_logout()
 
@@ -151,7 +151,7 @@ def list_users():
     else:
         users = User.query.filter(User.username.like(f"%{search}%")).all()
 
-    return render_template('users/index.html', users=users, form=g.form)
+    return render_template('users/index.html', users=users, form=g.csrf_form)
 
 
 @app.get('/users/<int:user_id>')
@@ -164,7 +164,7 @@ def show_user(user_id):
 
     user = User.query.get_or_404(user_id)
 
-    return render_template('users/show.html', user=user, form=g.form)
+    return render_template('users/show.html', user=user, form=g.csrf_form)
 
 
 @app.get('/users/<int:user_id>/following')
@@ -176,7 +176,7 @@ def show_following(user_id):
         return redirect("/")
 
     user = User.query.get_or_404(user_id)
-    return render_template('users/following.html', user=user, form=g.form)
+    return render_template('users/following.html', user=user, form=g.csrf_form)
 
 
 @app.get('/users/<int:user_id>/followers')
@@ -188,7 +188,7 @@ def show_followers(user_id):
         return redirect("/")
 
     user = User.query.get_or_404(user_id)
-    return render_template('users/followers.html', user=user, form=g.form)
+    return render_template('users/followers.html', user=user, form=g.csrf_form)
 
 
 @app.post('/users/follow/<int:follow_id>')
@@ -328,7 +328,7 @@ def homepage():
                     .limit(100)
                     .all())
 
-        return render_template('home.html', messages=messages, form=g.form)
+        return render_template('home.html', messages=messages, form=g.csrf_form)
 
     else:
         return render_template('home-anon.html')

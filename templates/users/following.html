@@ -24,7 +24,7 @@
             </div>
             </a>
 
-            <p class="card-bio">{{ followed_user.bio }}</p>
+
 
             {% if g.user.is_following(followed_user) %}
             <form method="POST"
@@ -41,7 +41,7 @@
             {% endif %}
 
           </div>
-
+          <p class="card-bio">{{ followed_user.bio }}</p>
         </div>
       </div>
     </div>
