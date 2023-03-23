@@ -1,5 +1,5 @@
 from flask_wtf import FlaskForm
-from wtforms import StringField, PasswordField, TextAreaField
+from wtforms import StringField, PasswordField, TextAreaField, HiddenField
 from wtforms.validators import DataRequired, Email, Length, URL
 
 
@@ -76,6 +76,13 @@ class EditProfileForm(FlaskForm):
         'Enter current password',
         validators=[DataRequired(), Length(min=6)],
     )
+
+
+class LikeWarbleForm(FlaskForm):
+    """Form used to like a warble"""
+    user_id = HiddenField(validators=[DataRequired()])
+
+    message_id = HiddenField(validators=[DataRequired()])
 
 
 class CSRFProtectForm(FlaskForm):
