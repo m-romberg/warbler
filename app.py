@@ -6,7 +6,7 @@ from flask_debugtoolbar import DebugToolbarExtension
 from sqlalchemy.exc import IntegrityError
 
 from forms import UserAddForm, LoginForm, MessageForm, CSRFProtectForm, EditProfileForm
-from models import db, connect_db, User, Message, DEFAULT_HEADER_IMAGE_URL, DEFAULT_IMAGE_URL
+from models import db, connect_db, User, Message, DEFAULT_HEADER_IMAGE_URL, DEFAULT_IMAGE_URL, Likes
 from werkzeug.exceptions import Unauthorized
 
 load_dotenv()
@@ -275,6 +275,22 @@ def delete_user():
 
     return redirect("/signup")
 
+@app.post('/users/<int:id>/likes')
+def like_a_message(id):
+
+    if not g.user:
+        flash("Access unauthorized.", "danger")
+        return redirect("/")
+
+    if g.csrf_form.validate_on_submit():
+        message_id = request.form["message_id"]
+        new_like = Likes(user_id=g.user.id, message_id=message_id)
+
+        db.session.add(new_like)
+        db.session.commit()
+    return redirect (f'/users/{g.user.id}')
+
+
 
 
 ##############################################################################
@@ -332,9 +348,6 @@ def delete_message(message_id):
     db.session.commit()
 
     return redirect(f"/users/{g.user.id}")
-
-@app.post('/messages/users/<int:id>/likes')
-
 
 
 ##############################################################################

@@ -273,6 +273,12 @@ nav + .container {
   z-index: 2;
 }
 
+/* TODO: CHECK IF ADD Z ORDER HERE OR IN HTML JINJA */
+#messages .list-group-item form{
+  position:relative;
+  z-index: 2;
+}
+
 #messages .list-group-item {
   display: flex;
   align-items: flex-start;
