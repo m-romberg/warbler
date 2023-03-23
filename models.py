@@ -29,6 +29,23 @@ class Follows(db.Model):
         primary_key=True,
     )
 
+class Likes(db.Model):
+    """Who has liked what message."""
+
+    __tablename__ = "likes"
+
+    user_id = db.Column(
+        db.Integer,
+        db.ForeignKey('users.id', ondelete='CASCADE'),
+        primary_key=True,
+    )
+
+    message_id = db.Column(
+        db.Integer,
+        db.ForeignKey('messages.id', ondelete='CASCADE'),
+        primary_key=True,
+    )
+
 
 class User(db.Model):
     """User in the system."""
@@ -84,6 +101,12 @@ class User(db.Model):
         secondaryjoin=(Follows.user_following_id == id),
         backref="following",
     )
+
+    likes = db.relationship('Likes',
+                            secondary="likes",
+                            primaryjoin=(Likes.user_id == id),
+                            secondaryjoin=(Likes.message_id == id),
+                            backref="liked_by")
 
     def __repr__(self):
         return f"<User #{self.id}: {self.username}, {self.email}>"
@@ -144,7 +167,10 @@ class User(db.Model):
 
 
 class Message(db.Model):
-    """An individual message ("warble")."""
+    """An individual message ("warble").
+
+    Message -> who liked it, backref="liked_by"
+    """
 
     __tablename__ = 'messages'
 
