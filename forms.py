@@ -78,12 +78,5 @@ class EditProfileForm(FlaskForm):
     )
 
 
-class LikeWarbleForm(FlaskForm):
-    """Form used to like a warble"""
-    user_id = HiddenField(validators=[DataRequired()])
-
-    message_id = HiddenField(validators=[DataRequired()])
-
-
 class CSRFProtectForm(FlaskForm):
     """Form just for CSRF Protection"""
