@@ -102,7 +102,7 @@ class User(db.Model):
         backref="following",
     )
 
-    likes = db.relationship('Likes',
+    likes = db.relationship('Message',
                             secondary="likes",
                             primaryjoin=(Likes.user_id == id),
                             secondaryjoin=(Likes.message_id == id),
