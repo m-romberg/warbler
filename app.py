@@ -290,7 +290,14 @@ def like_a_message(id):
         db.session.commit()
     return redirect (f'/users/{g.user.id}')
 
+@app.get('/users/<int:id>/likes')
+def show_like_page(id):
 
+    user = User.query.get_or_404(id)
+
+    likes = user.likes
+
+    return render_template('/users/likes.html', likes=likes, user=user)
 
 
 ##############################################################################
