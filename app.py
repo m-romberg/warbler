@@ -276,7 +276,7 @@ def delete_user():
     return redirect("/signup")
 
 @app.post('/users/<int:id>/likes')
-def like_a_message(id):
+def handle_like_a_message(id):
 
     if not g.user:
         flash("Access unauthorized.", "danger")
@@ -284,6 +284,12 @@ def like_a_message(id):
 
     if g.csrf_form.validate_on_submit():
         message_id = request.form["message_id"]
+        message = Message.query.get_or_404(message_id)
+        if message in g.user.likes:
+            db.session.delete(message)
+            db.session.commit()
+            return redirect(f'/users/{id}')
+
         new_like = Likes(user_id=g.user.id, message_id=message_id)
 
         db.session.add(new_like)
