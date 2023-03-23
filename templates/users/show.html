@@ -21,7 +21,7 @@
             </span>
         <p>{{ message.text }}</p>
         {% if message.user_id != g.user.id %}
-        <form action="users/{{ user.id }}/likes" method="POST">
+        <form action="users/{{ g.user.id }}/likes" method="POST">
           <input type="hidden" name="{{ message.id }}" value="{{ message.id }}">
           {{ g.csrf_form.csrf_token }}
 

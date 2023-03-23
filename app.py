@@ -276,6 +276,7 @@ def delete_user():
     return redirect("/signup")
 
 
+
 ##############################################################################
 # Messages routes:
 
@@ -331,6 +332,9 @@ def delete_message(message_id):
     db.session.commit()
 
     return redirect(f"/users/{g.user.id}")
+
+@app.post('/messages/users/<int:id>/likes')
+
 
 
 ##############################################################################
