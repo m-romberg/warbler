@@ -16,8 +16,8 @@ with open('generator/messages.csv') as messages:
 with open('generator/follows.csv') as follows:
     db.session.bulk_insert_mappings(Follows, DictReader(follows))
 
-user1 = User(username='Vaughn', email='vseekamp@gmail.com', image_url=DEFAULT_IMAGE_URL, header_image_url=DEFAULT_HEADER_IMAGE_URL, bio='Yo', password='password')
-user2 = User(username='Madelyn', email='madelyn@gmail.com', image_url=DEFAULT_IMAGE_URL, header_image_url=DEFAULT_HEADER_IMAGE_URL, bio='Hi', password='password')
+user1 = User.signup(username='Vaughn', email='vseekamp@gmail.com', image_url=DEFAULT_IMAGE_URL, password='password')
+user2 = User.signup(username='Madelyn', email='madelyn@gmail.com', image_url=DEFAULT_IMAGE_URL, password='password')
 
 # like1 = Likes(user_id=1, message_id=1)
 # like2 = Likes(user_id=2, message_id=2)
