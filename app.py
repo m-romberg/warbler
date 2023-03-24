@@ -17,7 +17,7 @@ app = Flask(__name__)
 
 app.config['SQLALCHEMY_DATABASE_URI'] = os.environ['DATABASE_URL']
 app.config['SQLALCHEMY_ECHO'] = False
-app.config['DEBUG_TB_INTERCEPT_REDIRECTS'] = True
+app.config['DEBUG_TB_INTERCEPT_REDIRECTS'] = False
 app.config['SECRET_KEY'] = os.environ['SECRET_KEY']
 toolbar = DebugToolbarExtension(app)
 
@@ -241,7 +241,7 @@ def profile():
         password = form.password.data
         if not User.authenticate(g.user.username, password):
             form.password.errors = ["Try again."]
-            return render_template("/users/edit.html", form=form, user=g.user)
+            return render_template("/users/edit.html", form=form)
 
         g.user.username = form.username.data
         g.user.email = form.email.data
