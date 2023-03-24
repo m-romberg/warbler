@@ -286,19 +286,20 @@ def handle_like_a_message(id):
     if g.csrf_form.validate_on_submit():
 
         message_id = request.form["message_id"]
+        redirect_url = request.form["form_origin_url"]
         message = Message.query.get_or_404(message_id)
 
         if message in g.user.likes:
             g.user.likes.remove(message)
             db.session.commit()
-            return redirect(f'/users/{id}')
+            return redirect(redirect_url)
 
         new_like = Likes(user_id=g.user.id, message_id=message_id)
 
         db.session.add(new_like)
         db.session.commit()
 
-    return redirect('/users')
+    return redirect(redirect_url)
 
 @app.get('/users/<int:id>/likes')
 def show_like_page(id):

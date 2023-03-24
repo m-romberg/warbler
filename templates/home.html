@@ -59,6 +59,7 @@
               {% if message.user_id != g.user.id %}
               <form action="/users/{{ g.user.id }}/likes" method="POST">
                 <input type="hidden" name="message_id" value="{{ message.id }}">
+                <input type="hidden" name="form_origin_url" value="{{ request.url }}">
                 {{ g.csrf_form.hidden_tag() }}
                 {% if message in g.user.likes %}
                 <button type="submit"><i class="bi bi-star-fill"></i></button>
