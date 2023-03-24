@@ -283,10 +283,12 @@ def handle_like_a_message(id):
         return redirect("/")
 
     if g.csrf_form.validate_on_submit():
+
         message_id = request.form["message_id"]
         message = Message.query.get_or_404(message_id)
+
         if message in g.user.likes:
-            db.session.delete(message)
+            g.user.likes.remove(message)
             db.session.commit()
             return redirect(f'/users/{id}')
 
@@ -294,7 +296,8 @@ def handle_like_a_message(id):
 
         db.session.add(new_like)
         db.session.commit()
-    return redirect (f'/users/{g.user.id}')
+
+    return redirect('/users')
 
 @app.get('/users/<int:id>/likes')
 def show_like_page(id):
