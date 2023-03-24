@@ -155,7 +155,7 @@ def list_users():
 
 @app.get('/users/<int:user_id>')
 def show_user(user_id):
-    """Show user profile."""
+    """Show this user profile."""
 
     if not g.user:
         flash("Access unauthorized.", "danger")
@@ -194,7 +194,7 @@ def show_followers(user_id):
 def start_following(follow_id):
     """Add a follow for the currently-logged-in user.
 
-    Redirect to following page for the current for the current user.
+    Redirect to following page for the current user.
     """
 
     if not g.user:
@@ -212,7 +212,7 @@ def start_following(follow_id):
 def stop_following(follow_id):
     """Have currently-logged-in-user stop following this user.
 
-    Redirect to following page for the current for the current user.
+    Redirect to following page for the current user.
     """
 
     if not g.user:
@@ -257,7 +257,7 @@ def profile():
     else:
         return render_template("/users/edit.html", form=form)
 
-
+#TODO: referential integrity delete
 @app.post('/users/delete')
 def delete_user():
     """Delete user.
@@ -278,6 +278,10 @@ def delete_user():
 
 @app.post('/users/<int:id>/likes')
 def handle_like_a_message(id):
+    """Toggle whether a message is liked by current user.
+
+    Redirect to request origin.
+    """
 
     if not g.user:
         flash("Access unauthorized.", "danger")
@@ -303,6 +307,7 @@ def handle_like_a_message(id):
 
 @app.get('/users/<int:id>/likes')
 def show_like_page(id):
+    """Show all messages liked by this user."""
 
     user = User.query.get_or_404(id)
 
@@ -328,8 +333,8 @@ def add_message():
     form = MessageForm()
 
     if form.validate_on_submit():
-        msg = Message(text=form.text.data)
-        g.user.messages.append(msg)
+        message = Message(text=form.text.data)
+        g.user.messages.append(message)
         db.session.commit()
 
         return redirect(f"/users/{g.user.id}")
@@ -345,8 +350,8 @@ def show_message(message_id):
         flash("Access unauthorized.", "danger")
         return redirect("/")
 
-    msg = Message.query.get_or_404(message_id)
-    return render_template('messages/show.html', message=msg)
+    message = Message.query.get_or_404(message_id)
+    return render_template('messages/show.html', message=message)
 
 
 @app.post('/messages/<int:message_id>/delete')
@@ -361,8 +366,8 @@ def delete_message(message_id):
         flash("Access unauthorized.", "danger")
         return redirect("/")
 
-    msg = Message.query.get_or_404(message_id)
-    db.session.delete(msg)
+    message = Message.query.get_or_404(message_id)
+    db.session.delete(message)
     db.session.commit()
 
     return redirect(f"/users/{g.user.id}")
