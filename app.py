@@ -241,7 +241,7 @@ def profile():
         password = form.password.data
         if not User.authenticate(g.user.username, password):
             form.password.errors = ["Try again."]
-            return render_template("/users/edit.html", form=form)
+            return render_template("/users/edit.html", form=form, user=g.user)
 
         g.user.username = form.username.data
         g.user.email = form.email.data
