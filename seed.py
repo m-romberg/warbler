@@ -19,12 +19,6 @@ with open('generator/follows.csv') as follows:
 user1 = User.signup(username='Vaughn', email='vseekamp@gmail.com', image_url=DEFAULT_IMAGE_URL, password='password')
 user2 = User.signup(username='Madelyn', email='madelyn@gmail.com', image_url=DEFAULT_IMAGE_URL, password='password')
 
-# like1 = Likes(user_id=1, message_id=1)
-# like2 = Likes(user_id=2, message_id=2)
-# like3 = Likes(user_id=3, message_id=3)
-# like4 = Likes(user_id=1, message_id=5)
-# like5 = Likes(user_id=4, message_id=4)
-
 db.session.add_all([user1, user2])
 
 

@@ -11,7 +11,7 @@ db = SQLAlchemy()
 DEFAULT_IMAGE_URL = "/static/images/default-pic.png"
 DEFAULT_HEADER_IMAGE_URL = "/static/images/warbler-hero.jpg"
 
-
+#TODO: edit to singular
 class Follows(db.Model):
     """Connection of a follower <-> followed_user."""
 
@@ -29,8 +29,13 @@ class Follows(db.Model):
         primary_key=True,
     )
 
+#MODEL NAME IS SINGULAR!!!
+#connection btw user and message
 class Likes(db.Model):
-    """Who has liked what message."""
+    """Who has liked what message.
+
+    Connection to user <-> user.likes
+    """
 
     __tablename__ = "likes"
 
@@ -102,6 +107,7 @@ class User(db.Model):
         backref="following",
     )
 
+    #TODO: update name to liked messages... could have other types of likes!
     likes = db.relationship('Message', secondary="likes")
 
     def __repr__(self):

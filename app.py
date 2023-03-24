@@ -257,7 +257,7 @@ def profile():
     else:
         return render_template("/users/edit.html", form=form)
 
-#TODO: referential integrity delete
+
 @app.post('/users/delete')
 def delete_user():
     """Delete user.
@@ -268,14 +268,19 @@ def delete_user():
     if not g.user:
         flash("Access unauthorized.", "danger")
         return redirect("/")
+    messages = Message.query.filter(Message.user_id == g.user.id)
 
     do_logout()
 
+    for message in messages:
+        db.session.delete(message)
     db.session.delete(g.user)
     db.session.commit()
 
     return redirect("/signup")
 
+#TODO: could change to handle.toggle, change id to user_id
+#todo: messages/message_id/like
 @app.post('/users/<int:id>/likes')
 def handle_like_a_message(id):
     """Toggle whether a message is liked by current user.
@@ -295,13 +300,10 @@ def handle_like_a_message(id):
 
         if message in g.user.likes:
             g.user.likes.remove(message)
-            db.session.commit()
-            return redirect(redirect_url)
+        else:
+            g.user.likes.append(message)
 
-        new_like = Likes(user_id=g.user.id, message_id=message_id)
-
-        db.session.add(new_like)
-        db.session.commit()
+    db.session.commit()
 
     return redirect(redirect_url)
 
